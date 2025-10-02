@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>David's Underwriting Guide v4.0</title>
+  <style>
+    :root{
+      --brand:#7E369F;--brand-light:#9B5AB8;--brand-dark:#5E2780;--brand-bg:#F5EFFA;
+      --success:#22C55E;--info:#3B82F6;--warning:#F59E0B;--danger:#EF4444;
+      --gray-50:#F9FAFB;--gray-100:#F3F4F6;--gray-200:#E5E7EB;--gray-300:#D1D5DB;
+      --gray-400:#9CA3AF;--gray-500:#6B7280;--gray-600:#4B5563;--gray-700:#374151;
+      --gray-800:#1F2937;--gray-900:#111827;
+    }
+    @media (prefers-color-scheme: dark){
+      :root{--bg:#1A1A2E;--text:#E5E5E5;--card-bg:#2A2A3E;--border:#3A3A4E}
+      body{background:var(--bg);color:var(--text)}
+    }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;
+      background:var(--gray-50);color:var(--gray-900);line-height:1.6
+    }
+    .header{
+      background:linear-gradient(135deg,var(--brand) 0%,var(--brand-dark) 100%);
+      color:#fff;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,.1);position:sticky;top:0;z-index:100
+    }
+    .header-content{
+      max-width:1400px;margin:0 auto;display:flex;justify-content:space-between;
+      align-items:center;flex-wrap:wrap;gap:1rem
+    }
+    .header h1{font-size:1.5rem;font-weight:600;display:flex;align-items:center;gap:.5rem}
+    .version-info{display:flex;gap:1rem;align-items:center;font-size:.875rem;opacity:.9}
+    .banner{
+      background:#FEF3C7;color:#92400E;padding:.75rem 1rem;text-align:center;border-bottom:2px solid #FCD34D;
+      font-weight:500;font-size:.9rem;line-height:1.4
+    }
+    .search-container{
+      padding:1.5rem;background:#fff;border-bottom:1px solid var(--gray-200);position:sticky;top:60px;z-index:90;
+      box-shadow:0 2px 4px rgba(0,0,0,.05)
+    }
+    .search-wrapper{max-width:800px;margin:0 auto;position:relative}
+    .search-input{
+      width:100%;padding:.75rem 3rem .75rem 1rem;border:2px solid var(--gray-300);border-radius:8px;
+      font-size:1rem;transition:all .2s
+    }
+    .search-input:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(126,54,159,.1)}
+    .search-hint{position:absolute;right:1rem;top:50%;transform:translateY(-50%);color:var(--gray-400);font-size:.875rem}
+    .entity-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:.75rem}
+    .chip{
+      display:inline-flex;align-items:center;gap:.25rem;padding:.25rem .75rem;background:var(--brand-bg);
+      color:var(--brand-dark);border-radius:9999px;font-size:.875rem;cursor:default
+    }
+    .chip-close{font-size:1.2rem;line-height:1;cursor:pointer;margin-left:.25rem}
+    /* search results panel */
+    .search-results{
+      margin-top:.75rem;border:1px solid var(--gray-200);border-radius:8px;background:#fff;overflow:hidden;display:none
+    }
+    .search-results.active{display:block}
+    .search-result-item{
+      padding:.75rem 1rem;border-top:1px solid var(--gray-100);display:flex;justify-content:space-between;gap:1rem;
+      align-items:center;cursor:pointer;transition:background .15s
+    }
+    .search-result-item:first-child{border-top:none}
+    .search-result-item:hover{background:var(--gray-50)}
+    .search-result-title{font-weight:600}
+    .search-result-snippet{color:var(--gray-600);font-size:.9rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .main-layout{display:flex;max-width:1600px;margin:0 auto;min-height:calc(100vh - 200px)}
+    .sidebar{
+      width:280px;background:#fff;border-right:1px solid var(--gray-200);padding:1.5rem;overflow-y:auto;
+      height:calc(100vh - 180px);position:sticky;top:140px
+    }
+    .content{flex:1;padding:2rem;overflow-x:auto}
+    .section{
+      background:#fff;border-radius:8px;padding:1.5rem;margin-bottom:2rem;box-shadow:0 1px 3px rgba(0,0,0,.1)
+    }
+    .section-header{
+      display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;padding-bottom:1rem;
+      border-bottom:2px solid var(--brand-bg)
+    }
+    .section h2{color:var(--brand);font-size:1.5rem;font-weight:600}
+    .section h3{color:var(--brand-dark);font-size:1.2rem;font-weight:600;margin:1.5rem 0 1rem}
+    .data-table{width:100%;border-collapse:collapse;margin-top:1rem;min-width:600px}
+    .table-wrapper{overflow-x:auto;position:relative;box-shadow:inset -2px 0 0 rgba(0,0,0,.1)}
+    .table-wrapper::-webkit-scrollbar{height:8px}
+    .table-wrapper::-webkit-scrollbar-track{background:var(--gray-100);border-radius:4px}
+    .table-wrapper::-webkit-scrollbar-thumb{background:var(--brand);border-radius:4px}
+    .data-table th{
+      background:var(--brand-bg);color:var(--brand-dark);padding:.75rem;text-align:left;font-weight:600;position:sticky;top:0;z-index:10
+    }
+    .data-table td{padding:.75rem;border-bottom:1px solid var(--gray-100)}
+    .data-table tbody tr:hover{background:var(--gray-50)}
+    .badge{display:inline-block;padding:.25rem .75rem;border-radius:4px;font-size:.875rem;font-weight:500}
+    .badge-success{background:#D1FAE5;color:#065F46}
+    .badge-info{background:#DBEAFE;color:#1E40AF}
+    .badge-warning{background:#FED7AA;color:#92400E}
+    .badge-danger{background:#FEE2E2;color:#991B1B}
+    .calculator{background:var(--gray-50);padding:1.5rem;border-radius:8px;margin-top:1.5rem}
+    .calculator h4{color:var(--brand);margin-bottom:1rem}
+    .form-group{margin-bottom:1rem}
+    .form-group label{display:block;margin-bottom:.25rem;font-weight:500;color:var(--gray-700)}
+    .form-control{
+      width:100%;padding:.5rem;border:1px solid var(--gray-300);border-radius:4px;font-size:1rem
+    }
+    .form-control:focus{outline:none;border-color:var(--brand);box-shadow:0 0 0 3px rgba(126,54,159,.1)}
+    .btn{
+      padding:.5rem 1.5rem;border:none;border-radius:6px;font-size:1rem;font-weight:500;cursor:pointer;transition:all .2s;
+      display:inline-flex;align-items:center;gap:.5rem
+    }
+    .btn-primary{background:var(--brand);color:#fff}
+    .btn-primary:hover{background:var(--brand-dark);transform:translateY(-1px);box-shadow:0 4px 12px rgba(126,54,159,.3)}
+    .btn-secondary{background:var(--gray-200);color:var(--gray-700)}
+    .btn-secondary:hover{background:var(--gray-300)}
+    .nav-link{display:block;padding:.5rem .75rem;margin:.25rem 0;text-decoration:none;color:var(--gray-700);
+      border-radius:6px;transition:all .2s}
+    .nav-link:hover{background:var(--brand-bg);color:var(--brand);transform:translateX(4px)}
+    .nav-link.active{background:var(--brand);color:#fff}
+    .accordion{border:1px solid var(--gray-200);border-radius:8px;margin-bottom:1rem;overflow:hidden}
+    .accordion-header{background:var(--gray-50);padding:1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;transition:background .2s}
+    .accordion-header:hover{background:var(--brand-bg)}
+    .accordion-content{padding:1rem;display:none}
+    .accordion.active .accordion-content{display:block}
+    .accordion-arrow{transition:transform .3s}
+    .accordion.active .accordion-arrow{transform:rotate(180deg)}
+    mark{background:#FDE047;padding:.1rem .2rem;border-radius:2px}
+    .copy-btn{background:transparent;border:none;color:var(--brand);cursor:pointer;padding:.25rem;font-size:1.2rem;transition:color .2s}
+    .copy-btn:hover{color:var(--brand-dark)}
+    .fab-container{position:fixed;bottom:2rem;right:2rem;z-index:1000}
+    .fab{
+      width:56px;height:56px;border-radius:50%;background:var(--brand);color:#fff;border:none;font-size:1.5rem;cursor:pointer;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);transition:all .3s
+    }
+    .fab:hover{background:var(--brand-dark);transform:scale(1.1);box-shadow:0 6px 16px rgba(0,0,0,.25)}
+    .fab-menu{position:absolute;bottom:70px;right:0;display:none;flex-direction:column;gap:.5rem}
+    .fab-menu.active{display:flex}
+    .fab-option{
+      background:#fff;border:1px solid var(--gray-200);padding:.75rem 1rem;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,.1);
+      white-space:nowrap;cursor:pointer;transition:all .2s
+    }
+    .fab-option:hover{background:var(--brand-bg);transform:translateX(-4px)}
+    @media (max-width:1024px){.sidebar{display:none}.content{padding:1rem}.fab-container{bottom:1rem;right:1rem}}
+    @media print{
+      .header,.search-container,.sidebar,.banner,#help{display:none !important}
+      .main-layout{display:block}
+      .content{padding:0;max-width:100%}
+      .section{page-break-inside:avoid;box-shadow:none;border:1px solid #ddd;margin-bottom:1rem}
+      .calculator,.copy-btn,.btn{display:none !important}
+      .accordion-content{display:block !important}
+      .data-table{font-size:.9rem}
+      body{font-size:11pt}
+      h2{font-size:16pt} h3{font-size:14pt}
+      @page{margin:1in .5in}
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div class="header-content">
+      <h1><span>📋</span> David's Underwriting Guide</h1>
+      <div class="version-info">
+        <span>Version: <strong>4.0</strong></span>
+        <span>Updated: <strong>2025-05-28</strong></span>
+        <button class="btn btn-secondary" onclick="window.print()">📄 Print/PDF</button>
+        <button class="btn btn-secondary" onclick="showHelp()">❓ Help</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="banner">
+    <strong>QUICK GUIDE:</strong> For internal informative purposes only. Not intended for Underwriting decisioning for those without Underwriting Authority.
+    <br/>
+    <span style="font-size:.85rem">
+      <strong>Admitted States:</strong> GA, FL, NC, NV, SC, IL, OH, WI, NM |
+      <strong>Non-Admitted:</strong> All states where Cover Whale holds a license (excluding NY, AK, HI)
+    </span>
+  </div>
+
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input id="globalSearch" class="search-input" type="text" placeholder="Search carriers, states, coverages, fees, rules..."/>
+      <span class="search-hint">Press / to focus</span>
+      <div id="entityChips" class="entity-chips"></div>
+      <div id="searchResults" class="search-results"></div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <aside class="sidebar">
+      <div class="filter-section">
+        <h3>Quick Navigation</h3>
+        <nav>
+          <a href="#carriers" class="nav-link" onclick="scrollToSection('carriers')">📊 Carriers Overview</a>
+          <a href="#coverages" class="nav-link" onclick="scrollToSection('coverages')">🛡️ Coverages & Limits</a>
+          <a href="#fees" class="nav-link" onclick="scrollToSection('fees')">💰 Fees</a>
+          <a href="#blockers" class="nav-link" onclick="scrollToSection('blockers')">🚫 Platform Blockers</a>
+          <a href="#drivers" class="nav-link" onclick="scrollToSection('drivers')">👤 Driver Eligibility</a>
+          <a href="#vehicles" class="nav-link" onclick="scrollToSection('vehicles')">🚛 Vehicle & Trailer Rules</a>
+          <a href="#commodities" class="nav-link" onclick="scrollToSection('commodities')">📦 Commodities</a>
+          <a href="#exclusions" class="nav-link" onclick="scrollToSection('exclusions')">❌ Exclusions</a>
+          <a href="#loss" class="nav-link" onclick="scrollToSection('loss')">📈 Loss History</a>
+        </nav>
+      </div>
+    </aside>
+
+    <main class="content">
+      <!-- Carriers Overview -->
+      <section class="section" id="carriers">
+        <div class="section-header">
+          <h2>Carriers Overview</h2>
+          <button class="copy-btn" onclick="copySection('carriers')" title="Copy to clipboard">📋</button>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Carrier</th><th>Contract Inception</th><th>Policy Prefix</th>
+                <th>AL</th><th>APD</th><th>MTC</th><th>TGL</th><th>NTL</th>
+                <th>Admitted</th><th>Excluded States</th><th>Fleet Size</th>
+                <th>Vehicle Classes</th><th>Max Age</th><th>UIIA</th><th>Auto Haulers</th>
+              </tr>
+            </thead>
+            <tbody id="carriersTable"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- Coverages & Limits -->
+      <section class="section" id="coverages">
+        <div class="section-header">
+          <h2>Coverages & Limits</h2>
+          <button class="copy-btn" onclick="copySection('coverages')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+            <h3>Auto Liability (AL)</h3><span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Limits:</strong> $1,000,000 / $750,000</p>
+            <div class="badge badge-info">UM/UIM/PIP align with state minimums and cannot be increased</div>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+            <h3>Auto Physical Damage (APD)</h3><span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Limit Guidance:</strong> &gt; $200k (up to $250k for some carriers)</p>
+            <p><strong>Policy Level Deductible:</strong> $2,500</p>
+
+            <h4>Vehicle Level Deductibles:</h4>
+            <table class="data-table">
+              <thead><tr><th>Vehicle Value</th><th>Deductible</th></tr></thead>
+              <tbody>
+                <tr><td>≤ $50,000</td><td>$1,000</td></tr>
+                <tr><td>$50,001 - $125,000</td><td>$2,500</td></tr>
+                <tr><td>$125,001 - $175,000</td><td>$5,000</td></tr>
+                <tr><td>&gt; $175,000</td><td>$7,500</td></tr>
+              </tbody>
+            </table>
+
+            <p><strong>Towing/Labor/Storage:</strong> $2,500 / $5,000 / $7,500 / $10,000 / $15,000 / $20,000 / $25,000</p>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+            <h3>Motor Truck Cargo (MTC)</h3><span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Limits:</strong> $100,000 / $125,000 / $150,000 / $175,000 / $200,000 / $250,000</p>
+            <p><strong>Deductibles:</strong> $1,000 / $2,500</p>
+            <p><strong>Unattended Vehicle Limit:</strong> $100,000</p>
+            <p><strong>Debris Removal Limit:</strong> $5,000</p>
+            <div class="badge badge-warning"><strong>Refrigeration Coverage:</strong> Required for frozen/refrigerated commodities</div>
+            <ul>
+              <li>Deductible: $2,500 if unit ≤ 10 years old</li>
+              <li>Deductible: $3,500 if unit &gt; 10 years old during policy term</li>
+              <li>Trailers &gt; 10 years ineligible at new business</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+            <h3>Truckers General Liability (TGL)</h3><span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Occurrence Limit:</strong> $1,000,000</p>
+            <p><strong>Aggregate Limit:</strong> $2,000,000</p>
+            <p><strong>Damage to Premises:</strong> $100,000</p>
+            <p><strong>Medical Expenses:</strong> $5,000</p>
+          </div>
+        </div>
+
+        <div class="accordion">
+          <div class="accordion-header" onclick="toggleAccordion(this.parentElement)">
+            <h3>Non-Trucking Liability (NTL)</h3><span class="accordion-arrow">▼</span>
+          </div>
+          <div class="accordion-content">
+            <p><strong>Occurrence Limit:</strong> $1,000,000</p>
+            <p><strong>Aggregate Limit:</strong> $1,000,000</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Fees -->
+      <section class="section" id="fees">
+        <div class="section-header">
+          <h2>Fees</h2>
+          <button class="copy-btn" onclick="copySection('fees')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Line of Business</th><th>Type</th><th>Telemetry</th>
+                <th>Prior to 7/1/23</th><th>7/1/23 - 2/12/24</th><th>2/13/24 - 3/24/24</th>
+                <th>3/25/24 - 1/7/25</th><th>1/8/25+</th><th>Policy Fee</th><th>NJ Policy Fee</th><th>IL/SC LCCF</th>
+              </tr>
+            </thead>
+            <tbody id="feesTable"></tbody>
+          </table>
+        </div>
+
+        <div class="calculator">
+          <h4>Fee Calculator</h4>
+          <div class="form-group">
+            <label>Quote Created Date:</label>
+            <input type="date" class="form-control" id="feeCalcDate"/>
+          </div>
+          <div class="form-group">
+            <label>Line of Business:</label>
+            <select class="form-control" id="feeCalcLine">
+              <option value="">Select...</option>
+              <option value="AL">Auto Liability (AL)</option>
+              <option value="APD">Auto Physical Damage (APD)</option>
+              <option value="MTC">Motor Truck Cargo (MTC)</option>
+              <option value="TGL">Truckers General Liability (TGL)</option>
+              <option value="NTL">Non-Trucking Liability (NTL)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Type:</label>
+            <select class="form-control" id="feeCalcType">
+              <option value="New">New Business</option>
+              <option value="Renewal">Renewal</option>
+            </select>
+          </div>
+          <div class="form-group" id="telemetryGroup">
+            <label>Telemetry (AL only):</label>
+            <select class="form-control" id="feeCalcTelemetry">
+              <option value="">N/A</option>
+              <option value="ELD">ELD</option>
+              <option value="Dashcam">Dashcam</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" onclick="calculateFee()">Calculate Fee</button>
+          <div id="feeResult" style="margin-top:1rem;"></div>
+        </div>
+      </section>
+
+      <!-- Platform Blockers -->
+      <section class="section" id="blockers">
+        <div class="section-header">
+          <h2>Platform Blockers</h2>
+          <button class="copy-btn" onclick="copySection('blockers')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <h3>APD Limits by Carrier</h3>
+        <table class="data-table">
+          <thead>
+            <tr><th>Carrier</th><th>Max Tractor Value</th><th>Max Trailer Value</th><th>Max Combined</th><th>Max TIV</th><th>Unit Cap</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Canopius</td><td>$225,000</td><td>-</td><td>$350,000</td><td>$1,500,000</td><td>-</td></tr>
+            <tr><td>Lloyds</td><td>$250,000</td><td>$100,000</td><td>-</td><td>$1,000,000</td><td>-</td></tr>
+            <tr><td>SCOR</td><td>$200,000</td><td>$100,000</td><td>-</td><td>-</td><td>75</td></tr>
+            <tr><td>Trisura</td><td>$200,000</td><td>$100,000</td><td>-</td><td>$3,500,000</td><td>-</td></tr>
+          </tbody>
+        </table>
+
+        <h3>MTC Limits by Carrier</h3>
+        <table class="data-table">
+          <thead><tr><th>Carrier</th><th>Max MTC Limit</th></tr></thead>
+          <tbody>
+            <tr><td>Canopius</td><td>$250,000</td></tr>
+            <tr><td>Trisura</td><td>$250,000</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- Driver Eligibility -->
+      <section class="section" id="drivers">
+        <div class="section-header">
+          <h2>Driver Eligibility</h2>
+          <button class="copy-btn" onclick="copySection('drivers')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <div>
+            <h3 style="color:var(--success);">✅ Acceptable</h3>
+            <table class="data-table">
+              <thead><tr><th>Rule</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr><td>Driver Age</td><td><span class="badge badge-success">23 to 70</span></td></tr>
+                <tr><td>Experience</td><td><span class="badge badge-success">2+ Years on similar vehicle</span></td></tr>
+                <tr><td>Accidents (3y)</td><td><span class="badge badge-success">≤ 1</span></td></tr>
+                <tr><td>Minor Violations (3y)</td><td><span class="badge badge-success">≤ 3</span></td></tr>
+                <tr><td>Suspensions (3y)</td><td><span class="badge badge-success">Administrative only</span></td></tr>
+                <tr><td>Combined (3y)</td><td><span class="badge badge-success">≤ 3</span></td></tr>
+                <tr><td>Major Violations (5y)</td><td><span class="badge badge-success">0</span></td></tr>
+                <tr><td>License Class</td><td><span class="badge badge-success">CDL A/B for scheduled units</span></td></tr>
+                <tr><td>License Status</td><td><span class="badge badge-success">VALID</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 style="color:var(--danger);">❌ Unacceptable</h3>
+            <table class="data-table">
+              <thead><tr><th>Rule</th><th>Value</th></tr></thead>
+              <tbody>
+                <tr><td>Driver Age</td><td><span class="badge badge-danger">≤22 or ≥71</span></td></tr>
+                <tr><td>Experience</td><td><span class="badge badge-danger">&lt; 2 Years</span></td></tr>
+                <tr><td>Accidents (3y)</td><td><span class="badge badge-danger">≥ 2</span></td></tr>
+                <tr><td>Minor Violations (3y)</td><td><span class="badge badge-danger">≥ 4</span></td></tr>
+                <tr><td>Combined (3y)</td><td><span class="badge badge-danger">≥ 4</span></td></tr>
+                <tr><td>Major Violations (5y)</td><td><span class="badge badge-danger">≥ 1</span></td></tr>
+                <tr><td>License Class</td><td><span class="badge badge-danger">Non-CDL with Class 7/8</span></td></tr>
+                <tr><td>License Status</td><td><span class="badge badge-danger">Not VALID</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="badge badge-info" style="margin-top:1rem;">
+          <strong>Owner Scheduling Rule:</strong> If AL is selected and owner has valid DL, owner should be scheduled/covered
+        </div>
+        <div class="badge badge-warning" style="margin-top:.5rem;">
+          Drivers &lt; vehicles by ≥2: Unacceptable | Drivers &lt; vehicles by 1: Follow-up required
+        </div>
+      </section>
+
+      <!-- Vehicle & Trailer Rules -->
+      <section class="section" id="vehicles">
+        <div class="section-header">
+          <h2>Vehicle & Trailer Rules</h2>
+          <button class="copy-btn" onclick="copySection('vehicles')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr><th>Carrier</th><th>Allowed Classes</th><th>Ineligible Classes</th><th>Max Vehicle Age</th><th>Oldest Year (2025)</th></tr>
+          </thead>
+          <tbody id="vehicleRulesTable"></tbody>
+        </table>
+
+        <div class="badge badge-warning" style="margin-top:1rem;">
+          <strong>Refrigerated Trailer:</strong> 10 years or newer only. Trailers &gt; 10 years ineligible at new business.
+        </div>
+
+        <h3>Body Types</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <div>
+            <h4>Allowed Vehicle Body Types</h4>
+            <div style="background:var(--gray-50);padding:1rem;border-radius:8px;">
+              <ul style="columns:2;column-gap:2rem;">
+                <li>Box Truck</li><li>Tractor</li><li>Flatbed Truck</li><li>Pickup</li>
+                <li>Straight Truck</li><li>Dump Truck</li><li>Stake Truck</li>
+              </ul>
+            </div>
+          </div>
+          <div>
+            <h4>Ineligible Vehicle Body Types</h4>
+            <div style="background:#FEE2E2;padding:1rem;border-radius:8px;">
+              <ul style="columns:2;column-gap:2rem;">
+                <li>Boom Truck</li><li>Bus</li><li>Cement Truck</li><li>Fire Truck</li>
+                <li>Food Truck</li><li>Garbage Truck</li><li>Snow Plow Truck</li><li>Tanker Truck</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Commodities -->
+      <section class="section" id="commodities">
+        <div class="section-header">
+          <h2>Commodities</h2>
+          <button class="copy-btn" onclick="copySection('commodities')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <div>
+            <h3 style="color:var(--danger);">Unacceptable Commodities</h3>
+            <table class="data-table">
+              <thead><tr><th>Commodity</th><th>Ineligible Lines</th></tr></thead>
+              <tbody>
+                <tr><td>Fly Ash</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Asphalt: Not Bagged</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Arms, ammunition, fireworks</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Cannabis, CBD</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Chemicals (bulk)</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Coal</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Cotton</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Currency</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Dangerous articles, explosives</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Fracking</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Hazmat</td><td><span class="badge badge-danger">ALL LINES</span></td></tr>
+                <tr><td>Eggs (shell)</td><td><span class="badge badge-danger">MTC</span></td></tr>
+                <tr><td>Empty Trailers</td><td><span class="badge badge-danger">MTC</span></td></tr>
+                <tr><td>Furs</td><td><span class="badge badge-danger">MTC</span></td></tr>
+                <tr><td>Hanging Meat</td><td><span class="badge badge-danger">MTC</span></td></tr>
+                <tr><td>Jewelry</td><td><span class="badge badge-danger">MTC</span></td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div>
+            <h3 style="color:var(--success);">Acceptable Commodities</h3>
+            <table class="data-table">
+              <thead><tr><th>Commodity</th><th>Notes</th></tr></thead>
+              <tbody>
+                <tr><td>Intermodal Containers</td><td><span class="badge badge-info">Requires UIIA</span></td></tr>
+                <tr><td>Frozen or Refrigerated</td><td><span class="badge badge-warning">Refrigeration coverage required</span></td></tr>
+                <tr><td>Seafood Frozen</td><td><span class="badge badge-warning">Refrigeration coverage required</span></td></tr>
+                <tr><td>Automobiles</td><td><span class="badge badge-info">Autohauler - Excluded for MTC/NTL</span></td></tr>
+                <tr><td>Agricultural Equipment</td><td>Not taken to farm operation</td></tr>
+                <tr><td>Alcoholic beverages</td><td>Except beer and wine</td></tr>
+                <tr><td>Appliances</td><td>Except TV and stereos</td></tr>
+                <tr><td>Building materials</td><td>Not to construction site</td></tr>
+                <tr><td>Heavy equipment</td><td>No oversized/overweight</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Exclusions -->
+      <section class="section" id="exclusions">
+        <div class="section-header">
+          <h2>Exclusions List</h2>
+          <button class="copy-btn" onclick="copySection('exclusions')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <div style="background:#FEE2E2;padding:1rem;border-radius:8px;">
+          <ul style="columns:3;column-gap:2rem;">
+            <li>Entity previously filed Bankruptcy</li><li>Personal Use</li><li>Ambulance, EMT, Mobile Blood Banks</li>
+            <li>Armored Cars</li><li>Boat Haulers</li><li>Automobile Dismantlers</li><li>Boom Trucks</li><li>Brokerage</li>
+            <li>Cannabis Haulers</li><li>Carnivals, Circus</li><li>Cement Mixers, Pumpers</li><li>Coal Haulers</li>
+            <li>Contractors, Contractor Equipment</li><li>Construction</li><li>Cotton Haulers</li><li>Courier Services</li>
+            <li>Crane Operations</li><li>Demolition</li><li>Emergency Road Service</li><li>Excavation</li>
+            <li>Farm/Agricultural Operations</li><li>Food Trucks</li><li>Fracking</li><li>Garbage/Refuse/Waste</li>
+            <li>Hazmat</li><li>Household Goods</li><li>Ice Cream Trucks</li><li>Logging</li><li>Mining</li>
+            <li>Mobile Home Transport</li><li>Oilfield Operations</li><li>Oversized/Overweight</li><li>Passenger Transport</li>
+            <li>Repossession</li><li>Towing</li><li>Utility/Pole Setting</li><li>Well Servicing</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- Loss History -->
+      <section class="section" id="loss">
+        <div class="section-header">
+          <h2>Loss History</h2>
+          <button class="copy-btn" onclick="copySection('loss')" title="Copy to clipboard">📋</button>
+        </div>
+
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Power Units</th><th>Aggregate Loss (3yr)</th><th>Freq (1yr) Max</th>
+              <th>Freq (3yr) Max</th><th>Loss Ratio Max</th><th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="lossHistoryTable"></tbody>
+        </table>
+
+        <div class="badge badge-info" style="margin-top:1rem;">Global Loss Ratio Threshold (3yr): Max 60%</div>
+
+        <div class="calculator">
+          <h4>Loss History Evaluator (Informational Only)</h4>
+          <div class="form-group">
+            <label>Power Units:</label>
+            <input type="number" class="form-control" id="lossUnits" min="1" max="100"/>
+          </div>
+          <div class="form-group">
+            <label>Frequency (1 year):</label>
+            <input type="number" class="form-control" id="lossFreq1" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Frequency (3 years):</label>
+            <input type="number" class="form-control" id="lossFreq3" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Aggregate Loss ($):</label>
+            <input type="number" class="form-control" id="lossAggregate" min="0"/>
+          </div>
+          <div class="form-group">
+            <label>Loss Ratio (%):</label>
+            <input type="number" class="form-control" id="lossRatio" min="0" max="100" step="0.01"/>
+          </div>
+          <button class="btn btn-primary" onclick="evaluateLossHistory()">Evaluate</button>
+          <div id="lossResult" style="margin-top:1rem;"></div>
+        </div>
+      </section>
+
+      <!-- Help -->
+      <section class="section" id="help" style="display:none;">
+        <div class="section-header">
+          <h2>Help & Information</h2>
+          <button class="btn btn-secondary" onclick="hideHelp()">✖️ Close</button>
+        </div>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem;">
+          <div>
+            <h3>🔍 Search Tips</h3>
+            <ul>
+              <li>Press <kbd>/</kbd> to quickly focus the search bar</li>
+              <li>Search for carriers: "Accredited", "Knight", "Canopius"</li>
+              <li>Search for lines: "AL", "APD", "MTC", "TGL", "NTL"</li>
+              <li>Search for states: "GA", "FL", "excluded states"</li>
+              <li>Search highlights appear in yellow throughout the document</li>
+            </ul>
+
+            <h3>⌨️ Keyboard Shortcuts</h3>
+            <ul>
+              <li><kbd>/</kbd> - Focus search bar</li>
+              <li><kbd>Ctrl</kbd> + <kbd>P</kbd> - Print/Export to PDF</li>
+              <li><kbd>Esc</kbd> - Clear search/Close dialogs</li>
+            </ul>
+
+            <h3>📋 Copy & Export</h3>
+            <ul>
+              <li>Click the 📋 icon on any section header to copy that section</li>
+              <li>Use Print/PDF button to export the entire guide</li>
+              <li>Tables can be selected and copied directly to Excel</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>📊 Data Sources</h3>
+            <ul>
+              <li><strong>Version:</strong> 4.0 (Updated 2025-05-28)</li>
+              <li><strong>Carriers:</strong> 8 active carriers</li>
+              <li><strong>Admitted States:</strong> GA, FL, NC, NV, SC, IL, OH, WI, NM</li>
+              <li><strong>Non-Admitted:</strong> All states where Cover Whale holds a license (excluding NY, AK, HI)</li>
+            </ul>
+
+            <h3>⚠️ Important Notes</h3>
+            <div class="badge badge-warning" style="margin:.5rem 0;">All information is for internal informative purposes only</div>
+            <ul>
+              <li>Not intended for Underwriting decisioning without proper authority</li>
+              <li>Fee calculations are estimates - verify with current rate sheets</li>
+              <li>Loss history evaluations are informational guidelines only</li>
+              <li>Platform blockers may vary by submission date</li>
+            </ul>
+
+            <h3>📞 Support & Feedback</h3>
+            <ul>
+              <li><strong>Underwriting Support:</strong> Contact your underwriting manager</li>
+              <li><strong>Technical Issues:</strong> Report via internal ticketing system</li>
+              <li><strong>Data Updates:</strong> Submit corrections to the underwriting team</li>
+              <li><strong>Tool Version:</strong> David's Underwriting Guide v4.0</li>
+            </ul>
+          </div>
+        </div>
+
+        <div style="margin-top:2rem;padding:1rem;background:var(--gray-50);border-radius:8px;">
+          <h3>🎯 Quick Reference</h3>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;">
+            <div>
+              <h4>Coverage Abbreviations</h4>
+              <ul>
+                <li><strong>AL</strong> - Auto Liability</li><li><strong>APD</strong> - Auto Physical Damage</li>
+                <li><strong>MTC</strong> - Motor Truck Cargo</li><li><strong>TGL</strong> - Truckers General Liability</li>
+                <li><strong>NTL</strong> - Non-Trucking Liability (Bobtail)</li><li><strong>TI</strong> - Trailer Interchange</li>
+                <li><strong>UIIA</strong> - Uniform Intermodal Interchange Agreement</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Common Terms</h4>
+              <ul>
+                <li><strong>CSL</strong> - Combined Single Limit</li><li><strong>UM/UIM</strong> - Uninsured/Underinsured Motorist</li>
+                <li><strong>PIP</strong> - Personal Injury Protection</li><li><strong>TIV</strong> - Total Insured Value</li>
+                <li><strong>LCCF</strong> - Loss Control Compliance Fee</li><li><strong>E&amp;S</strong> - Excess &amp; Surplus</li>
+                <li><strong>CDL</strong> - Commercial Driver's License</li>
+              </ul>
+            </div>
+            <div>
+              <h4>Telemetry Types</h4>
+              <ul>
+                <li><strong>ELD</strong> - Electronic Logging Device</li>
+                <li><strong>Dashcam</strong> - Dashboard Camera System</li>
+              </ul>
+              <h4>Policy Types</h4>
+              <ul>
+                <li><strong>New Business</strong> - First policy term</li>
+                <li><strong>Renewal</strong> - Continuing coverage</li>
+                <li><strong>Endorsement</strong> - Mid-term changes</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Floating Action Button -->
+  <div class="fab-container">
+    <div class="fab-menu" id="fabMenu">
+      <div class="fab-option" onclick="scrollToTop()">⬆️ Back to Top</div>
+      <div class="fab-option" onclick="showHelp()">❓ Help Guide</div>
+      <div class="fab-option" onclick="window.print()">📄 Print/Export</div>
+      <div class="fab-option" onclick="document.getElementById('globalSearch').focus()">🔍 Search</div>
+    </div>
+    <button class="fab" onclick="toggleFabMenu()">⚡</button>
+  </div>
+
+  <script>
+    // ------------------------------ DATA ------------------------------
+    const GUIDE_DATA = {
+      metadata:{
+        version:"4.0",
+        lastUpdated:"2025-05-28",
+        disclaimer:"QUICK GUIDE: For internal informative purposes only. Not intended for Underwriting decisioning for those without Underwriting Authority.",
+        admittedStates:["GA","FL","NC","NV","SC","IL","OH","WI","NM"],
+        nonAdmittedNote:"All states where Cover Whale holds a license (no NY, AK, HI)"
+      },
+      carriers:[
+        {name:"Accredited",
+         contract:{inception:"2023-12-31",policyPrefix:"2-CWH-XX(State)-S(+7 digits)(-00 new biz, -01 renewal)"},
+         lines:{AL:true,APD:false,MTC:false,TGL:true,NTL:false},
+         guidelines:{admitted:false,excludedStates:["LA"],targetFleetSize:"1-25 units",UIIA:true,autoHaulers:true,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:28}},
+        {name:"Ascot",
+         contract:{inception:"2023-08-01",policyPrefix:"ASC-CW-XXXXX"},
+         lines:{AL:true,APD:false,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:["NY","VA","MI","FL","AL","AR","MD","DE","ID","LA","MN","MS","MO"],targetFleetSize:"No Cap (Platform blocks at 25)",UIIA:true,autoHaulers:true,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:27}},
+        {name:"Canopius US",
+         contract:{inception:"2019-11-01",policyPrefix:"CAN-XXXXX"},
+         lines:{AL:false,APD:true,MTC:false,TGL:true,NTL:false},
+         guidelines:{admitted:false,excludedStates:[],targetFleetSize:"$1.5m (APD), Any size for MTC",UIIA:false,autoHaulers:true,vehicleClasses:"Class 6-8",vehicleOrTrailerMaxAge:25}},
+        {name:"Everspan (MunichRe)",
+         contract:{inception:"2023-11-01",policyPrefix:"EVR-XXXXX"},
+         lines:{AL:true,APD:false,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:[],targetFleetSize:"1-25 units",note:"Currently not offering as of 7/8/25",UIIA:false,autoHaulers:true,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:27}},
+        {name:"Knight",
+         contract:{inception:"2020-09-01",policyPrefix:"KNT-XXXXX"},
+         lines:{AL:true,APD:false,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:["NY","MI","IN","LA","NJ","GA","CA Border Counties to MX"],targetFleetSize:"1-20 units",UIIA:false,autoHaulers:false,vehicleClasses:"Class 4-8",vehicleOrTrailerMaxAge:23}},
+        {name:"Lloyds - MAP/WRB",
+         contract:{inception:"2021-03-01",policyPrefix:"LLD-XXXXX"},
+         lines:{AL:false,APD:true,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:[],targetFleetSize:"Any fleet size (1-9 units when mono-alone)",UIIA:false,autoHaulers:false,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:null}},
+        {name:"SCOR",
+         contract:{inception:"2020-10-21",policyPrefix:"SCR-XXXXX"},
+         lines:{AL:false,APD:true,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:[],targetFleetSize:"1-75 units",UIIA:false,autoHaulers:false,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:null}},
+        {name:"Trisura",
+         contract:{inception:"2020-11-01",policyPrefix:"TRI-XXXXX"},
+         lines:{AL:false,APD:true,MTC:false,TGL:false,NTL:false},
+         guidelines:{admitted:false,excludedStates:[],targetFleetSize:"Any fleet size",UIIA:false,autoHaulers:true,vehicleClasses:"Class 2-8",vehicleOrTrailerMaxAge:null}}
+      ],
+      fees:{
+        windows:[
+          {label:"Prior to 7/1/23",start:null,end:"2023-06-30"},
+          {label:"7/1/23 - 2/12/24",start:"2023-07-01",end:"2024-02-12"},
+          {label:"2/13/24 - 3/24/24",start:"2024-02-13",end:"2024-03-24"},
+          {label:"3/25/24 - 1/7/25",start:"2024-03-25",end:"2025-01-07"},
+          {label:"1/8/25+",start:"2025-01-08",end:null}
+        ],
+        matrix:[
+          {line:"AL",type:"New",telemetry:"ELD",values:[null,799,799,799,399],policyFee:500,njPolicyFee:250,ilscLCCF:399},
+          {line:"AL",type:"Renewal",telemetry:"ELD",values:[null,399.5,399.5,399.5,200],policyFee:250,njPolicyFee:250},
+          {line:"AL",type:"New",telemetry:"Dashcam",values:[499,799,799,1099,999],policyFee:500,njPolicyFee:250,ilscLCCF:999},
+          {line:"AL",type:"Renewal",telemetry:"Dashcam",values:[null,399.5,549.5,549.5,549.5],policyFee:250},
+          {line:"APD",type:"New",telemetry:null,values:[null,null,null,null,null],policyFee:300,njPolicyFee:250},
+          {line:"APD",type:"Renewal",telemetry:null,values:[null,null,null,null,null],policyFee:150},
+          {line:"MTC",type:"New",telemetry:null,values:[null,100,100,100,200],policyFee:0},
+          {line:"MTC",type:"Renewal",telemetry:null,values:[null,100,100,100,100],policyFee:0},
+          {line:"TGL",type:"New",telemetry:null,values:[null,100,100,100,100],policyFee:200},
+          {line:"TGL",type:"Renewal",telemetry:null,values:[null,100,100,100,50],policyFee:100},
+          {line:"NTL",type:"New",telemetry:null,values:[null,100,100,100,100],policyFee:0},
+          {line:"NTL",type:"Renewal",telemetry:null,values:[null,100,100,100,50],policyFee:0}
+        ]
+      },
+      lossHistory:{
+        byPowerUnits:[
+          {powerUnits:1,aggregateLossThreshold:75000,freq1YrMax:2,freq3YrMax:3,lossRatio3YrMax:null},
+          {powerUnits:2,aggregateLossThreshold:100000,freq1YrMax:2,freq3YrMax:4,lossRatio3YrMax:null},
+          {powerUnits:3,aggregateLossThreshold:125000,freq1YrMax:3,freq3YrMax:4,lossRatio3YrMax:null},
+          {powerUnits:4,aggregateLossThreshold:150000,freq1YrMax:3,freq3YrMax:5,lossRatio3YrMax:0.75},
+          {powerUnits:5,aggregateLossThreshold:175000,freq1YrMax:4,freq3YrMax:5,lossRatio3YrMax:0.75},
+          {powerUnits:6,aggregateLossThreshold:200000,freq1YrMax:4,freq3YrMax:5,lossRatio3YrMax:0.70},
+          {powerUnits:7,aggregateLossThreshold:225000,freq1YrMax:5,freq3YrMax:6,lossRatio3YrMax:0.65},
+          {powerUnits:8,aggregateLossThreshold:250000,freq1YrMax:5,freq3YrMax:6,lossRatio3YrMax:0.60},
+          {powerUnits:9,aggregateLossThreshold:275000,freq1YrMax:6,freq3YrMax:7,lossRatio3YrMax:0.60},
+          {powerUnits:10,aggregateLossThreshold:300000,freq1YrMax:6,freq3YrMax:7,lossRatio3YrMax:0.60},
+          {powerUnits:"11-15",aggregateLossThreshold:400000,freq1YrMax:7,freq3YrMax:8,lossRatio3YrMax:0.55},
+          {powerUnits:"16-20",aggregateLossThreshold:500000,freq1YrMax:8,freq3YrMax:10,lossRatio3YrMax:0.50},
+          {powerUnits:"21-25",aggregateLossThreshold:600000,freq1YrMax:9,freq3YrMax:12,lossRatio3YrMax:0.50}
+        ],
+        global:{lossRatio3YrMax:0.60}
+      },
+      vehicleRules:[
+        {carrier:"Knight",allowedClasses:"4,5,6,7,8",ineligibleClasses:"1,2,3",allowedAgeYears:23,oldestYear:2002},
+        {carrier:"Canopius",allowedClasses:"6,7,8",ineligibleClasses:"1,2,3,4,5",allowedAgeYears:25,oldestYear:2000},
+        {carrier:"Accredited",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:28,oldestYear:1997},
+        {carrier:"Ascot",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:27,oldestYear:1998},
+        {carrier:"Everspan",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:27,oldestYear:1998},
+        {carrier:"Trisura",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:null,oldestYear:null},
+        {carrier:"SCOR",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:null,oldestYear:null},
+        {carrier:"Lloyds",allowedClasses:"2,3,4,5,6,7,8",ineligibleClasses:"1",allowedAgeYears:null,oldestYear:null}
+      ]
+    };
+
+    // ------------------------------ INIT ------------------------------
+    document.addEventListener('DOMContentLoaded', () => {
+      renderCarriersTable();
+      renderFeesTable();
+      renderLossHistoryTable();
+      renderVehicleRulesTable();
+      initializeSearch();
+      initializeFeeCalculator();
+      updateActiveNavigation();
+
+      // Keyboard shortcuts
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && !e.ctrlKey && !e.metaKey) {
+          e.preventDefault(); document.getElementById('globalSearch').focus();
+        }
+        if (e.key === 'Escape') {
+          hideHelp(); const si = document.getElementById('globalSearch');
+          si.value = ''; clearHighlights(); clearSearchResults();
+        }
+      });
+
+      window.addEventListener('scroll', updateActiveNavigation);
+
+      if (window.location.hash) {
+        setTimeout(() => scrollToSection(window.location.hash.substring(1)), 100);
+      }
+    });
+
+    // ------------------------------ NAV ------------------------------
+    function scrollToSection(sectionId){
+      const el = document.getElementById(sectionId);
+      if (!el) return;
+      const offset = 150;
+      const pos = el.offsetTop - offset;
+      window.scrollTo({top:pos, behavior:'smooth'});
+      window.location.hash = sectionId;
+      updateActiveNavigation();
+    }
+
+    function updateActiveNavigation(){
+      const sections = document.querySelectorAll('.section');
+      const navLinks = document.querySelectorAll('.nav-link');
+      let current = null;
+      const y = window.scrollY + 200;
+      sections.forEach(s => { if (s.offsetTop <= y) current = s.id; });
+      navLinks.forEach(l => {
+        l.classList.remove('active');
+        if (l.getAttribute('href') === '#' + current) l.classList.add('active');
+      });
+    }
+
+    // ------------------------------ HELP ------------------------------
+    function showHelp(){ document.getElementById('help').style.display='block'; scrollToSection('help'); }
+    function hideHelp(){ document.getElementById('help').style.display='none'; }
+
+    // ------------------------------ RENDER TABLES ------------------------------
+    function renderCarriersTable(){
+      const tbody = document.getElementById('carriersTable');
+      GUIDE_DATA.carriers.forEach(c => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${c.name}</td>
+          <td>${c.contract.inception}</td>
+          <td style="font-size:.8rem">${c.contract.policyPrefix}</td>
+          <td>${c.lines.AL ? '✅' : ''}</td>
+          <td>${c.lines.APD ? '✅' : ''}</td>
+          <td>${c.lines.MTC ? '✅' : ''}</td>
+          <td>${c.lines.TGL ? '✅' : ''}</td>
+          <td>${c.lines.NTL ? '✅' : ''}</td>
+          <td>${c.guidelines.admitted ? 'Yes' : 'Non-Admitted'}</td>
+          <td style="font-size:.85rem">${c.guidelines.excludedStates.join(', ') || 'None'}</td>
+          <td style="font-size:.85rem">${c.guidelines.targetFleetSize}</td>
+          <td>${c.guidelines.vehicleClasses}</td>
+          <td>${c.guidelines.vehicleOrTrailerMaxAge ?? 'No Cap'}</td>
+          <td>${c.guidelines.UIIA ? '✅' : ''}</td>
+          <td>${c.guidelines.autoHaulers ? '✅' : ''}</td>`;
+      });
+    }
+
+    function renderFeesTable(){
+      const tbody = document.getElementById('feesTable');
+      GUIDE_DATA.fees.matrix.forEach(f => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${f.line}</td>
+          <td>${f.type}</td>
+          <td>${f.telemetry ?? 'N/A'}</td>
+          <td>${f.values[0] ?? '-'}</td>
+          <td>${f.values[1] ?? '-'}</td>
+          <td>${f.values[2] ?? '-'}</td>
+          <td>${f.values[3] ?? '-'}</td>
+          <td>${f.values[4] ?? '-'}</td>
+          <td>${f.policyFee ?? '-'}</td>
+          <td>${f.njPolicyFee ?? '-'}</td>
+          <td>${f.ilscLCCF ?? '-'}</td>`;
+      });
+    }
+
+    function renderLossHistoryTable(){
+      const tbody = document.getElementById('lossHistoryTable');
+      GUIDE_DATA.lossHistory.byPowerUnits.forEach(item => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${item.powerUnits}</td>
+          <td>$${item.aggregateLossThreshold.toLocaleString()}</td>
+          <td>${item.freq1YrMax}</td>
+          <td>${item.freq3YrMax}</td>
+          <td>${item.lossRatio3YrMax ? (item.lossRatio3YrMax * 100) + '%' : 'N/A'}</td>
+          <td><span class="badge badge-danger">Unacceptable</span></td>`;
+      });
+    }
+
+    function renderVehicleRulesTable(){
+      const tbody = document.getElementById('vehicleRulesTable');
+      GUIDE_DATA.vehicleRules.forEach(r => {
+        const row = tbody.insertRow();
+        row.innerHTML = `
+          <td>${r.carrier}</td>
+          <td>Class ${r.allowedClasses}</td>
+          <td>Class ${r.ineligibleClasses}</td>
+          <td>${r.allowedAgeYears ? r.allowedAgeYears + ' years' : 'No Cap'}</td>
+          <td>${r.oldestYear ?? 'N/A'}</td>`;
+      });
+    }
+
+    // ------------------------------ CALCULATORS ------------------------------
+    function initializeFeeCalculator(){
+      const lineSelect = document.getElementById('feeCalcLine');
+      const telemetryGroup = document.getElementById('telemetryGroup');
+      telemetryGroup.style.display = 'none';
+      lineSelect.addEventListener('change', function(){
+        if (this.value === 'AL'){ telemetryGroup.style.display = 'block'; }
+        else { telemetryGroup.style.display = 'none'; document.getElementById('feeCalcTelemetry').value=''; }
+      });
+    }
+
+    function calculateFee(){
+      const date = document.getElementById('feeCalcDate').value;
+      const line = document.getElementById('feeCalcLine').value;
+      const type = document.getElementById('feeCalcType').value;
+      const telemetry = document.getElementById('feeCalcTelemetry').value;
+
+      if (!date || !line){
+        document.getElementById('feeResult').innerHTML = '<div class="badge badge-warning">Please fill in all required fields</div>';
+        return;
+      }
+
+      const d = new Date(date);
+      const windows = GUIDE_DATA.fees.windows;
+      const winIdx = windows.findIndex(w => {
+        const s = w.start ? new Date(w.start) : new Date('1900-01-01');
+        const e = w.end ? new Date(w.end) : new Date('2100-01-01');
+        return d >= s && d <= e;
+      });
+
+      const row = GUIDE_DATA.fees.matrix.find(r =>
+        r.line === line && r.type === type && ((r.telemetry ?? '') === (telemetry || ''))
+      );
+
+      if (!row || winIdx === -1){
+        document.getElementById('feeResult').innerHTML = '<div class="badge badge-danger">No fee data found for this combination</div>';
+        return;
+      }
+
+      const uwFee = row.values[winIdx];
+      const policyFee = row.policyFee ?? null;
+      const njPolicyFee = row.njPolicyFee ?? null;
+      const ilscLCCF = row.ilscLCCF ?? null;
+      const win = windows[winIdx];
+
+      document.getElementById('feeResult').innerHTML = `
+        <div class="badge badge-success">
+          <strong>Window:</strong> ${win.label}<br/>
+          <strong>UW Fee:</strong> ${uwFee != null ? ('$' + uwFee) : 'N/A'}<br/>
+          <strong>Policy Fee:</strong> ${policyFee != null ? ('$' + policyFee) : 'N/A'}<br/>
+          ${njPolicyFee != null ? ('<strong>NJ Policy Fee:</strong> $' + njPolicyFee + '<br/>') : ''}
+          ${ilscLCCF != null ? ('<strong>IL/SC LCCF:</strong> $' + ilscLCCF + '<br/>') : ''}
+        </div>
+        <div class="badge badge-info" style="margin-top:.5rem;">This is for informational purposes only</div>`;
+    }
+
+    function evaluateLossHistory(){
+      const units = parseInt(document.getElementById('lossUnits').value);
+      const freq1 = parseInt(document.getElementById('lossFreq1').value);
+      const freq3 = parseInt(document.getElementById('lossFreq3').value);
+      const aggregate = parseInt(document.getElementById('lossAggregate').value);
+      const ratio = parseFloat(document.getElementById('lossRatio').value) / 100;
+
+      if (!units){
+        document.getElementById('lossResult').innerHTML = '<div class="badge badge-warning">Please enter power units</div>';
+        return;
+      }
+
+      let threshold = null;
+      for (const item of GUIDE_DATA.lossHistory.byPowerUnits){
+        if (typeof item.powerUnits === 'number' && units === item.powerUnits){ threshold = item; break; }
+        if (typeof item.powerUnits === 'string'){
+          const [a,b] = item.powerUnits.split('-').map(n => parseInt(n,10));
+          if (units >= a && units <= b){ threshold = item; break; }
+        }
+      }
+
+      if (!threshold){
+        document.getElementById('lossResult').innerHTML = '<div class="badge badge-info">No specific threshold for this unit count</div>';
+        return;
+      }
+
+      const issues = [];
+      if (aggregate > threshold.aggregateLossThreshold){
+        issues.push(`Aggregate loss exceeds threshold ($${threshold.aggregateLossThreshold.toLocaleString()})`);
+      }
+      if (freq1 > threshold.freq1YrMax){
+        issues.push(`1-year frequency exceeds max (${threshold.freq1YrMax})`);
+      }
+      if (freq3 > threshold.freq3YrMax){
+        issues.push(`3-year frequency exceeds max (${threshold.freq3YrMax})`);
+      }
+      if (threshold.lossRatio3YrMax && ratio > threshold.lossRatio3YrMax){
+        issues.push(`Loss ratio exceeds max (${(threshold.lossRatio3YrMax * 100).toFixed(0)}%)`);
+      }
+      if (ratio > GUIDE_DATA.lossHistory.global.lossRatio3YrMax){
+        issues.push(`Loss ratio exceeds global max (${(GUIDE_DATA.lossHistory.global.lossRatio3YrMax * 100).toFixed(0)}%)`);
+      }
+
+      if (issues.length){
+        document.getElementById('lossResult').innerHTML = `
+          <div class="badge badge-danger">
+            <strong>Likely Unacceptable (Informational Only)</strong><br/>
+            ${issues.join('<br/>')}
+          </div>`;
+      } else {
+        document.getElementById('lossResult').innerHTML = `
+          <div class="badge badge-success">
+            <strong>Within Informational Thresholds</strong><br/>
+            All metrics within acceptable ranges for ${units} power units
+          </div>`;
+      }
+    }
+
+    // ------------------------------ SEARCH ------------------------------
+    function initializeSearch(){
+      const input = document.getElementById('globalSearch');
+      input.addEventListener('input', e => performSearch(e.target.value.trim()));
+    }
+
+    function performSearch(query){
+      clearHighlights();
+      clearSearchResults();
+      if (!query){ extractEntities(''); return; }
+
+      // highlight matches
+      document.querySelectorAll('.section').forEach(section => {
+        highlightText(section, query);
+      });
+
+      // entities (chips)
+      extractEntities(query);
+
+      // results list
+      buildSearchResults(query);
+    }
+
+    function highlightText(element, query){
+      const walker = document.createTreeWalker(element, NodeFilter.SHOW_TEXT, null, false);
+      const nodes = [];
+      while (walker.nextNode()) nodes.push(walker.currentNode);
+
+      const re = new RegExp(`(${escapeRegExp(query)})`, 'gi');
+      nodes.forEach(n => {
+        const text = n.textContent;
+        if (re.test(text)){
+          const span = document.createElement('span');
+          span.innerHTML = text.replace(re, '<mark>$1</mark>');
+          n.parentNode.replaceChild(span, n);
+        }
+      });
+    }
+
+    function clearHighlights(){
+      document.querySelectorAll('mark').forEach(m => {
+        const p = m.parentNode;
+        p.replaceChild(document.createTextNode(m.textContent), m);
+        p.normalize();
+      });
+    }
+
+    function buildSearchResults(query){
+      const resultsEl = document.getElementById('searchResults');
+      const sections = Array.from(document.querySelectorAll('.section'));
+      const results = [];
+
+      sections.forEach(s => {
+        const text = s.textContent.toLowerCase();
+        const idx = text.indexOf(query.toLowerCase());
+        if (idx !== -1){
+          const title = s.querySelector('h2')?.textContent || s.id;
+          const snippet = s.textContent.substring(Math.max(0, idx - 40), idx + query.length + 60).replace(/\s+/g,' ').trim();
+          results.push({id:s.id, title, snippet});
+        }
+      });
+
+      if (!results.length) return;
+
+      resultsEl.classList.add('active');
+      resultsEl.innerHTML = results.map(r => `
+        <div class="search-result-item" onclick="scrollToSection('${r.id}')">
+          <div>
+            <div class="search-result-title">${r.title}</div>
+            <div class="search-result-snippet">${escapeHtml(r.snippet)}</div>
+          </div>
+          <div>↪</div>
+        </div>`).join('');
+    }
+
+    function clearSearchResults(){
+      const el = document.getElementById('searchResults');
+      el.classList.remove('active');
+      el.innerHTML = '';
+    }
+
+    function extractEntities(query){
+      const chips = document.getElementById('entityChips');
+      chips.innerHTML = '';
+      if (!query) return;
+
+      // carriers
+      GUIDE_DATA.carriers.forEach(c => {
+        if (query.toLowerCase().includes(c.name.toLowerCase())) addChip(c.name);
+      });
+      // lines
+      const lines = ['AL','APD','MTC','TGL','NTL','Auto Liability','Physical Damage','Motor Truck Cargo','General Liability','Non-Trucking'];
+      lines.forEach(l => { if (query.toLowerCase().includes(l.toLowerCase())) addChip(l); });
+    }
+
+    function addChip(text){
+      const chips = document.getElementById('entityChips');
+      const chip = document.createElement('div');
+      chip.className = 'chip';
+      chip.innerHTML = `${text} <span class="chip-close" onclick="this.parentElement.remove()">×</span>`;
+      chips.appendChild(chip);
+    }
+
+    // ------------------------------ MISC UI ------------------------------
+    function toggleAccordion(acc){ acc.classList.toggle('active'); }
+
+    function copySection(id){
+      const text = document.getElementById(id).innerText;
+      navigator.clipboard.writeText(text).then(()=>showToast('Section copied to clipboard!'))
+        .catch(()=>alert('Copy failed. Please select and copy manually.'));
+    }
+
+    function toggleFabMenu(){ document.getElementById('fabMenu').classList.toggle('active'); }
+    function scrollToTop(){ window.scrollTo({top:0,behavior:'smooth'}); toggleFabMenu(); }
+
+    document.addEventListener('click', e => {
+      const fab = document.querySelector('.fab-container');
+      if (fab && !fab.contains(e.target)) document.getElementById('fabMenu').classList.remove('active');
+    });
+
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}`;
+    document.head.appendChild(style);
+
+    function showToast(message){
+      const t = document.createElement('div');
+      t.style.cssText = `
+        position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);
+        background:var(--gray-800);color:#fff;padding:.75rem 1.5rem;border-radius:8px;z-index:10000;animation:slideUp .3s ease`;
+      t.textContent = message; document.body.appendChild(t);
+      setTimeout(()=>t.remove(),3000);
+    }
+
+    // ------------------------------ UTILS ------------------------------
+    function escapeRegExp(s){ return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); }
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+    // Expose for simple testing
+    window.__GUIDE__ = { search: performSearch, evaluateLossHistory, calculateFee };
+  </script>
+</body>
+</html>
